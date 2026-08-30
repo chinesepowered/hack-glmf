@@ -109,6 +109,17 @@ export default function CreatePage() {
     }
   };
 
+  const copyShareLink = async () => {
+    if (!code) return;
+    const link = `${window.location.origin}/share?import=${encodeURIComponent(code)}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      setMsg("Share link copied — anyone can open it to import this fighter!");
+    } catch {
+      setMsg("Copy failed — select the link text manually.");
+    }
+  };
+
   const save = () => {
     const withId: CharacterDef = {
       ...def,
@@ -304,6 +315,9 @@ export default function CreatePage() {
             </button>
             <button className="btn-comic text-xl" onClick={copyCode} disabled={!code}>
               Copy code
+            </button>
+            <button className="btn-comic btn-comic-green text-xl" onClick={copyShareLink} disabled={!code}>
+              Copy share link
             </button>
           </div>
           {msg && <p className="font-display text-lg text-green-700">{msg}</p>}

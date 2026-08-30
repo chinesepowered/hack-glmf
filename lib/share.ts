@@ -98,6 +98,20 @@ export type ShareResult =
   | { ok: true; character: CharacterDef }
   | { ok: false; error: string };
 
+/**
+ * Extracts a WBC1 share code from arbitrary pasted text — a bare code, or a
+ * full share URL like https://host/share?c=WBC1.… or /share?import=WBC1.…
+ * Returns the input trimmed when it is already a bare code.
+ */
+export function extractShareCode(input: string): string {
+  const trimmed = input.trim();
+  if (trimmed.includes("WBC1.")) {
+    const match = /WBC1\.[A-Za-z0-9_-]+\.[0-9a-fA-F]{8}/.exec(trimmed);
+    if (match) return match[0];
+  }
+  return trimmed;
+}
+
 export function encodeCharacterCode(def: CharacterDef): string {
   const payload = {
     v: 1,

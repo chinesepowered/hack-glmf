@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import CharacterCard from "@/components/CharacterCard";
-import { decodeCharacterCode, type ShareResult } from "@/lib/share";
+import { decodeCharacterCode, extractShareCode, type ShareResult } from "@/lib/share";
 import { saveCustomCharacter } from "@/lib/storage";
 
 function ShareInner() {
@@ -14,10 +14,11 @@ function ShareInner() {
   const [result, setResult] = useState<ShareResult | null>(null);
   const [saved, setSaved] = useState(false);
 
-  // Auto-verify when arriving via /share?c=<code>
+  // Auto-verify when arriving via /share?c=<code> or /share?import=<code-or-url>
   useEffect(() => {
-    const c = params.get("c");
-    if (!c) return;
+    const raw = params.get("c") ?? params.get("import");
+    if (!raw) return;
+    const c = extractShareCode(raw);
     // External input (URL) seeding local state after mount is intentional.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setResult(decodeCharacterCode(c));
@@ -26,7 +27,7 @@ function ShareInner() {
   }, [params]);
 
   const verify = () => {
-    setResult(decodeCharacterCode(code));
+    setResult(decodeCharacterCode(extractShareCode(code)));
     setSaved(false);
   };
 
@@ -47,12 +48,12 @@ function ShareInner() {
 
       <div className="comic-panel p-4">
         <label className="block text-sm font-bold">
-          Paste a share code (starts with WBC1):
+          Paste a share code or a share link (starts with WBC1):
           <textarea
             className="field-input font-mono text-xs h-24 mt-1"
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            placeholder="WBC1.…"
+            placeholder="WBC1.… or https://…/share?import=WBC1.…"
           />
         </label>
         <button className="btn-comic btn-comic-blue mt-3 text-xl" onClick={verify} disabled={!code.trim()}>

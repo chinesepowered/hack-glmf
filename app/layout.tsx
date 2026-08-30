@@ -15,9 +15,23 @@ const comicNeue = Comic_Neue({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://celeb.chinesepowered.com"),
   title: "Celeb Fighter — Celebrity Brawl",
   description:
     "A street-fighter style parody brawl. Pick your celeb, unleash their signature special move, and create + share custom fighters.",
+  openGraph: {
+    title: "Celeb Fighter — Celebrity Brawl",
+    description:
+      "A street-fighter style parody brawl. Pick your celeb, unleash their signature special move, and create + share custom fighters.",
+    type: "website",
+    siteName: "Celeb Fighter",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Celeb Fighter — Celebrity Brawl",
+    description:
+      "A street-fighter style parody brawl. Pick your celeb, unleash their signature special move, and create + share custom fighters.",
+  },
 };
 
 export default function RootLayout({

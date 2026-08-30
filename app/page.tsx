@@ -16,11 +16,19 @@ export default function Home() {
   const [picking, setPicking] = useState<0 | 1>(0);
 
   useEffect(() => {
+    // Support ?import=<code> / ?c=<code> deep links: hand off to /share.
+    const params = new URLSearchParams(window.location.search);
+    const importParam = params.get("import") ?? params.get("c");
+    if (importParam) {
+      router.replace("/share?import=" + encodeURIComponent(importParam));
+      return;
+    }
     // localStorage is a client-only external store; it can only be read
     // after mount, so setState here is intentional.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setRoster(getFullRoster());
-  }, []);
+    // router is stable across renders; including it satisfies exhaustive-deps.
+  }, [router]);
 
   const pick = (id: string) => {
     if (picking === 0) {
@@ -105,10 +113,16 @@ export default function Home() {
         ))}
       </div>
 
-      <div className="mt-8 flex flex-wrap gap-3 justify-center">
+      <div className="mt-8 flex flex-wrap items-center gap-3 justify-center">
         <Link href="/create" className="btn-comic btn-comic-blue text-xl">
           + Create a fighter
         </Link>
+        <button
+          className="btn-comic btn-comic-red text-3xl"
+          onClick={() => router.push(`/play?p1=${p1}&p2=${p2}${cpu ? "&cpu=1" : ""}`)}
+        >
+          FIGHT!
+        </button>
         <Link href="/share" className="btn-comic btn-comic-green text-xl">
           Import a share code
         </Link>
