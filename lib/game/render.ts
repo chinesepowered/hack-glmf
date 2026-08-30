@@ -760,6 +760,15 @@ function poseSpecial(f: Fighter, pose: Pose): void {
       pose.expr = "smug";
       break;
     }
+    case "ai": {
+      const up = Math.min(1, p / 8);
+      pose.fx = 20; pose.fy = SHOULDER_Y - 26 * up;
+      pose.bx = -20; pose.by = SHOULDER_Y - 22 * up;
+      pose.crouch = 8 * up;
+      pose.lean = -0.16;
+      pose.expr = "shout";
+      break;
+    }
   }
 }
 
@@ -2088,8 +2097,10 @@ function hudSide(
   ctx.strokeText(label, mirrored ? x + w : x, y + 94);
   ctx.fillText(label, mirrored ? x + w : x, y + 94);
 
-  if (f.buff > 0) statusChip(ctx, mirrored, x, w, y + 100, "POWERED UP", f.def.look.accent);
-  else if (f.confused > 0) statusChip(ctx, mirrored, x, w, y + 100, "CONFUSED", "#b388ff");
+  if (f.buff > 0) {
+    const aiMode = f.def.special.type === "ai";
+    statusChip(ctx, mirrored, x, w, y + 100, aiMode ? "AI MODE" : "POWERED UP", aiMode ? "#7ffcb0" : f.def.look.accent);
+  } else if (f.confused > 0) statusChip(ctx, mirrored, x, w, y + 100, "CONFUSED", "#b388ff");
   else if (f.sleeping > 0) statusChip(ctx, mirrored, x, w, y + 100, "ASLEEP", "#7ec8ff");
 
   ctx.restore();

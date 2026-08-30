@@ -2,7 +2,7 @@
 // Pure simulation: no DOM, no canvas, no timers. The React component feeds it
 // Inputs and calls step() once per frame; the renderer reads public fields.
 
-import type { CharacterDef, SpecialType } from "@/lib/types";
+import type { CharacterDef, SpecialType, SpecialVisual } from "@/lib/types";
 
 export const ARENA_W = 960;
 export const ARENA_H = 540;
@@ -76,6 +76,7 @@ export const SPECIAL_DATA: Record<SpecialType, SpecialTiming> = {
   uppercut: { total: 40, cooldown: 50 },
   barrage: { total: 58, cooldown: 66 },
   counter: { total: 44, cooldown: 54 },
+  ai: { total: 40, cooldown: 110 },
 };
 
 export type AiAction =
@@ -138,8 +139,8 @@ export interface Projectile {
   maxLife: number;
   damage: number;
   color: string;
-  kind: string;
-  visual: string; // "energy" | "eagle" | "flag" — how the renderer draws it
+  kind: "projectile" | "shockwave";
+  visual: SpecialVisual; // how the renderer draws the projectile
   spin: number;
   hasHit: boolean;
 }
@@ -520,6 +521,7 @@ export class WorldBattle {
     if (sp.type === "dash" || sp.type === "shockwave" || sp.type === "barrage") {
       this.shake = Math.max(this.shake, 6);
     }
+    if (sp.type === "ai") this.flash = Math.max(this.flash, 0.28);
   }
 
   private updateAttack(f: Fighter, opp: Fighter): void {
@@ -841,6 +843,24 @@ export class WorldBattle {
 
       case "counter": {
         if (p >= 4 && p <= 30) f.parry = 3;
+        if (p >= total) this.endAttack(f);
+        break;
+      }
+
+      case "ai": {
+        // Open-source the opponent's moves: overclock yourself for a while
+        // (speed + power) and scramble their controls by "reading their source".
+        if (p === 8) {
+          f.buff = Math.max(f.buff, 200);
+          f.vx = 0;
+          opp.confused = Math.max(opp.confused, 90);
+          this.spawnWord("OPEN SOURCE!", f.x, f.y - 190, f.def.look.accent, 32);
+          this.spawnSpark(f.x, f.y - 60, f.def.look.accent, 24);
+          this.spawnRing(f.x, f.y - 70, 12, 6, 26, f.def.look.accent, 8, false);
+          this.spawnRing(f.x, GROUND_Y, 16, 7, 24, f.def.look.accent, 6, true);
+          this.flashScreen(0.4, f.def.look.accent);
+          this.shake = Math.max(this.shake, 9);
+        }
         if (p >= total) this.endAttack(f);
         break;
       }
@@ -1362,7 +1382,7 @@ export class WorldBattle {
         break;
     }
 
-    if (me.aiAction === "special" && (dist < 300 || type === "buff" || type === "nap")) {
+    if (me.aiAction === "special" && (dist < 300 || type === "buff" || type === "nap" || type === "ai")) {
       input.special = true;
     }
     if (me.aiPress && me.aiTimer > 8) {
@@ -1397,6 +1417,8 @@ export class WorldBattle {
         return dist < 130;
       case "counter":
         return dist < 130 && opp.state === "attack";
+      case "ai":
+        return me.buff <= 0 && dist < 260;
       default:
         return dist < 220;
     }

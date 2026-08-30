@@ -189,9 +189,9 @@ export const STARTER_CHARACTERS: CharacterDef[] = [
     // intentionally far beyond the 120/1.6/1.4 custom caps.
     stats: { hp: 999, speed: 1.9, power: 5.0 },
     special: {
-      type: "barrage",
-      name: "TANG QUAKE",
-      taunt: "The legend shakes the earth itself!",
+      type: "ai",
+      name: "CHINA OPEN SOURCE",
+      taunt: "Open source. Full access. Fork you.",
       power: 3.0,
     },
     look: {

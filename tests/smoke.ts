@@ -1,5 +1,5 @@
 // Headless smoke tests for Celeb Fighter engine + share codes.
-// Run: node tmp/smoke/smoke.ts   (Node 24 strips TS types natively)
+// Run: node smoke.ts   (Node 24 strips TS types natively; see tests/)
 import { encodeCharacterCode, decodeCharacterCode } from "./share.ts";
 import { STARTER_CHARACTERS } from "./characters.ts";
 import { WorldBattle, emptyInputs, ROUND_SECONDS, GROUND_Y } from "./engine.ts";

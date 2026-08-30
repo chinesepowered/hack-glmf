@@ -11,7 +11,8 @@ export type SpecialType =
   | "vanish"
   | "uppercut"
   | "barrage"
-  | "counter";
+  | "counter"
+  | "ai";
 
 export const SPECIAL_TYPES: { type: SpecialType; label: string; hint: string }[] = [
   { type: "projectile", label: "Yell & Throw", hint: "Yell your catchphrase and hurl a flying object across the arena" },
@@ -24,6 +25,7 @@ export const SPECIAL_TYPES: { type: SpecialType; label: string; hint: string }[]
   { type: "uppercut", label: "Rising Uppercut", hint: "Invincible rising launcher that pops the opponent sky-high for a juggle" },
   { type: "barrage", label: "Barrage", hint: "A storm of armoured rapid punches ending in a launching finisher" },
   { type: "counter", label: "Counter Stance", hint: "Brace yourself — the next hit you take is parried and answered with a devastating riposte" },
+  { type: "ai", label: "Open-Source AI", hint: "Deploy the AI: overclock your speed and power while reading the opponent's source code to scramble their controls" },
 ];
 
 export type SpecialVisual = "energy" | "eagle" | "flag" | "star" | "burger";
