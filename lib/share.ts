@@ -16,14 +16,18 @@ import {
   ACCESSORIES,
   BUILDS,
   HAIR_STYLES,
+  NOSES,
   SPECIAL_TYPES,
+  SPECIAL_VISUALS,
   type Accessory,
   type Build,
   type CharacterDef,
   type CharacterStats,
   type HairStyle,
   type LookDef,
+  type Nose,
   type SpecialType,
+  type SpecialVisual,
 } from "@/lib/types";
 
 const PREFIX = "WBC1";
@@ -224,14 +228,27 @@ function validateSpecial(
     return { ok: false, error: "Special-move object is missing." };
   const sp = value as Record<string, unknown>;
   if (!isEnum<SpecialType>(sp.type, SPECIAL_TYPES.map((t) => t.type)))
-    return { ok: false, error: "Special type must be one of: projectile, dash, buff, shockwave, confuse." };
+    return { ok: false, error: `Special type must be one of: ${SPECIAL_TYPES.map((t) => t.type).join(", ")}.` };
+  const visual =
+    sp.visual === undefined ? undefined : isEnum<SpecialVisual>(sp.visual, SPECIAL_VISUALS) ? sp.visual : null;
+  if (visual === null)
+    return { ok: false, error: `Special visual must be one of: ${SPECIAL_VISUALS.join(", ")}.` };
   const specialName = sanitizeText(sp.name, 24);
   if (!specialName) return { ok: false, error: "Special-move name is required (max 24 characters)." };
   const taunt = emptyToDefault(sp.taunt, "Take that!", 60);
   if (!taunt) return { ok: false, error: "Special taunt must be text (max 60 characters)." };
   if (typeof sp.power !== "number" || !Number.isFinite(sp.power) || sp.power < 0.8 || sp.power > 1.5)
     return { ok: false, error: "Special power must be a number between 0.8 and 1.5." };
-  return { ok: true, special: { type: sp.type, name: specialName, taunt, power: sp.power } };
+  return {
+    ok: true,
+    special: {
+      type: sp.type,
+      name: specialName,
+      taunt,
+      power: sp.power,
+      ...(visual ? { visual } : {}),
+    },
+  };
 }
 
 function validateLook(value: unknown): { ok: true; look: LookDef } | { ok: false; error: string } {
@@ -251,6 +268,8 @@ function validateLook(value: unknown): { ok: true; look: LookDef } | { ok: false
     return { ok: false, error: `accessory must be one of: ${ACCESSORIES.join(", ")}.` };
   if (!isEnum<Build>(l.build, BUILDS))
     return { ok: false, error: `build must be one of: ${BUILDS.join(", ")}.` };
+  const nose = l.nose === undefined ? undefined : isEnum<Nose>(l.nose, NOSES) ? l.nose : null;
+  if (nose === null) return { ok: false, error: `nose must be one of: ${NOSES.join(", ")}.` };
   return {
     ok: true,
     look: {
@@ -262,6 +281,7 @@ function validateLook(value: unknown): { ok: true; look: LookDef } | { ok: false
       hairStyle: l.hairStyle,
       accessory: l.accessory,
       build: l.build,
+      ...(nose ? { nose } : {}),
     },
   };
 }

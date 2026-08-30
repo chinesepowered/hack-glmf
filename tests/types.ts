@@ -6,23 +6,66 @@ export type SpecialType =
   | "dash"
   | "buff"
   | "shockwave"
-  | "confuse";
+  | "confuse"
+  | "nap"
+  | "vanish"
+  | "uppercut"
+  | "barrage"
+  | "counter";
 
 export const SPECIAL_TYPES: { type: SpecialType; label: string; hint: string }[] = [
-  { type: "projectile", label: "Projectile", hint: "Fires a fast energy ball across the arena" },
-  { type: "dash", label: "Dash Attack", hint: "Lunges forward with a heavy shoulder strike" },
-  { type: "buff", label: "Self Buff", hint: "Temporarily boosts own speed and power" },
-  { type: "shockwave", label: "Shockwave", hint: "Slams the ground, blasting nearby enemies away" },
-  { type: "confuse", label: "Confuse", hint: "Scrambles the opponent's left/right controls" },
+  { type: "projectile", label: "Yell & Throw", hint: "Yell your catchphrase and hurl a flying object across the arena" },
+  { type: "dash", label: "Dash Attack", hint: "Armoured shoulder rush that plows through hits and slams the opponent into the wall" },
+  { type: "buff", label: "Self Buff", hint: "Blazing aura: more speed, more damage, and you shrug off knockback" },
+  { type: "shockwave", label: "Shockwave Shout", hint: "Yell so loud the ground blasts open on both sides — also heals you a little" },
+  { type: "confuse", label: "Confuse", hint: "Scrambles the opponent's left/right controls and slows them down" },
+  { type: "nap", label: "Power Nap", hint: "Fall asleep to heal (half damage taken while asleep); waking up blasts the opponent awake too" },
+  { type: "vanish", label: "Vanish", hint: "Turn untouchable and teleport clean behind the opponent for a free punish" },
+  { type: "uppercut", label: "Rising Uppercut", hint: "Invincible rising launcher that pops the opponent sky-high for a juggle" },
+  { type: "barrage", label: "Barrage", hint: "A storm of armoured rapid punches ending in a launching finisher" },
+  { type: "counter", label: "Counter Stance", hint: "Brace yourself — the next hit you take is parried and answered with a devastating riposte" },
 ];
 
-export type HairStyle = "swoop" | "fluff" | "bun" | "short" | "spiky" | "long" | "bald";
-export type Accessory = "none" | "glasses" | "cap" | "earrings";
-export type Build = "slim" | "normal" | "wide";
+export type SpecialVisual = "energy" | "eagle" | "flag" | "star" | "burger";
+export const SPECIAL_VISUALS: SpecialVisual[] = ["energy", "eagle", "flag", "star", "burger"];
 
-export const HAIR_STYLES: HairStyle[] = ["swoop", "fluff", "bun", "short", "spiky", "long", "bald"];
-export const ACCESSORIES: Accessory[] = ["none", "glasses", "cap", "earrings"];
+export const SPECIAL_VISUAL_LABELS: Record<SpecialVisual, string> = {
+  energy: "Energy orb",
+  eagle: "Bald eagle",
+  flag: "Waving flag",
+  star: "Spinning star",
+  burger: "Fast-food burger",
+};
+
+export type HairStyle =
+  | "swoop"
+  | "fluff"
+  | "bun"
+  | "short"
+  | "spiky"
+  | "long"
+  | "bald"
+  | "wave"
+  | "pomp";
+export type Accessory =
+  | "none"
+  | "glasses"
+  | "aviators"
+  | "cap"
+  | "earrings"
+  | "pearls"
+  | "flagpin";
+export type Build = "slim" | "normal" | "wide";
+export type Nose = "button" | "broad" | "hook" | "bulb";
+
+export const HAIR_STYLES: HairStyle[] = [
+  "swoop", "fluff", "bun", "short", "spiky", "long", "bald", "wave", "pomp",
+];
+export const ACCESSORIES: Accessory[] = [
+  "none", "glasses", "aviators", "cap", "earrings", "pearls", "flagpin",
+];
 export const BUILDS: Build[] = ["slim", "normal", "wide"];
+export const NOSES: Nose[] = ["button", "broad", "hook", "bulb"];
 
 export interface LookDef {
   skin: string;
@@ -33,6 +76,7 @@ export interface LookDef {
   hairStyle: HairStyle;
   accessory: Accessory;
   build: Build;
+  nose?: Nose;
 }
 
 export interface CharacterStats {
@@ -46,6 +90,7 @@ export interface SpecialDef {
   name: string;
   taunt: string;
   power: number; // 0.8..1.5 damage multiplier
+  visual?: SpecialVisual; // projectile look (default "energy")
 }
 
 export interface CharacterDef {
@@ -59,5 +104,3 @@ export interface CharacterDef {
   win: string;
   custom?: boolean;
 }
-
-

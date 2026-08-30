@@ -118,10 +118,10 @@ export default function Home() {
         <h2 className="font-display text-2xl mb-2">Controls</h2>
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <b>P1</b>: A/D move · W jump · S block · F punch · G kick · H special (needs full meter)
+            <b>P1</b>: A/D move · W jump · S block · F punch · G kick · H signature move (unlimited!)
           </div>
           <div>
-            <b>P2</b>: Arrows move/jump/block · J punch · K kick · L special · <b>R</b> rematch after K.O.
+            <b>P2</b>: Arrows move/jump/block · J punch · K kick · L signature · <b>R</b> rematch after K.O.
           </div>
         </div>
       </section>

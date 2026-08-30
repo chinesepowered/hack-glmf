@@ -9,13 +9,18 @@ import {
   ACCESSORIES,
   BUILDS,
   HAIR_STYLES,
+  NOSES,
   SPECIAL_TYPES,
+  SPECIAL_VISUALS,
+  SPECIAL_VISUAL_LABELS,
   type Accessory,
   type Build,
   type CharacterDef,
   type HairStyle,
   type LookDef,
+  type Nose,
   type SpecialType,
+  type SpecialVisual,
 } from "@/lib/types";
 
 const MAX_POINTS = 10;
@@ -29,6 +34,7 @@ const DEFAULT_LOOK: LookDef = {
   hairStyle: "short",
   accessory: "none",
   build: "normal",
+  nose: "broad",
 };
 
 export default function CreatePage() {
@@ -38,6 +44,7 @@ export default function CreatePage() {
   const [win, setWin] = useState("GG!");
   const [pts, setPts] = useState({ hp: 3, speed: 4, power: 3 });
   const [specialType, setSpecialType] = useState<SpecialType>("projectile");
+  const [specialVisual, setSpecialVisual] = useState<SpecialVisual>("energy");
   const [specialName, setSpecialName] = useState("SIGNATURE MOVE");
   const [taunt, setTaunt] = useState("Take that!");
   const [specialPower, setSpecialPower] = useState(1.0);
@@ -68,12 +75,13 @@ export default function CreatePage() {
         name: specialName.trim() || "SPECIAL",
         taunt: taunt.trim() || "Take that!",
         power: specialPower,
+        ...(specialType === "projectile" ? { visual: specialVisual } : {}),
       },
       look,
       intro: intro.trim() || "Let's go!",
       win: win.trim() || "GG!",
     }),
-    [name, tagline, stats, specialType, specialName, taunt, specialPower, look, intro, win]
+    [name, tagline, stats, specialType, specialVisual, specialName, taunt, specialPower, look, intro, win]
   );
 
   const changePts = (key: "hp" | "speed" | "power", delta: number) => {
@@ -160,9 +168,9 @@ export default function CreatePage() {
             ))}
           </fieldset>
 
-          {/* Special move */}
+          {/* Signature move */}
           <fieldset className="comic-panel-tight p-3">
-            <legend className="font-display text-xl px-1">Special move</legend>
+            <legend className="font-display text-xl px-1">Signature move (unlimited use!)</legend>
             <div className="grid sm:grid-cols-2 gap-3">
               <label className="block text-sm font-bold">
                 Type
@@ -184,12 +192,28 @@ export default function CreatePage() {
               </label>
             </div>
             <p className="text-xs opacity-70 mt-1">{SPECIAL_TYPES.find((t) => t.type === specialType)?.hint}</p>
+            {specialType === "projectile" && (
+              <label className="block text-sm font-bold mt-2">
+                Thrown object
+                <select
+                  className="field-input mt-1"
+                  value={specialVisual}
+                  onChange={(e) => setSpecialVisual(e.target.value as SpecialVisual)}
+                >
+                  {SPECIAL_VISUALS.map((v) => (
+                    <option key={v} value={v}>
+                      {SPECIAL_VISUAL_LABELS[v]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
             <label className="block text-sm font-bold mt-2">
               Taunt (max 60)
               <input className="field-input mt-1" maxLength={60} value={taunt} onChange={(e) => setTaunt(e.target.value)} />
             </label>
             <label className="block text-sm font-bold mt-2">
-              Special power: {specialPower.toFixed(1)}
+              Signature power: {specialPower.toFixed(1)}
               <input
                 type="range"
                 min={0.8}
@@ -223,7 +247,7 @@ export default function CreatePage() {
                 </label>
               ))}
             </div>
-            <div className="grid sm:grid-cols-3 gap-3 mt-3 text-sm font-bold">
+            <div className="grid sm:grid-cols-4 gap-3 mt-3 text-sm font-bold">
               <label>
                 Hair
                 <select className="field-input mt-1" value={look.hairStyle} onChange={(e) => setLook({ ...look, hairStyle: e.target.value as HairStyle })}>
@@ -245,6 +269,14 @@ export default function CreatePage() {
                 <select className="field-input mt-1" value={look.build} onChange={(e) => setLook({ ...look, build: e.target.value as Build })}>
                   {BUILDS.map((b) => (
                     <option key={b} value={b}>{b}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Nose
+                <select className="field-input mt-1" value={look.nose ?? "broad"} onChange={(e) => setLook({ ...look, nose: e.target.value as Nose })}>
+                  {NOSES.map((n) => (
+                    <option key={n} value={n}>{n}</option>
                   ))}
                 </select>
               </label>

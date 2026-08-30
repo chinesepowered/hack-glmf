@@ -44,7 +44,8 @@ export default function CharacterCard({
         <span title="Speed">⚡ {def.stats.speed.toFixed(2)}</span>
         <span title="Power">💪 {def.stats.power.toFixed(2)}</span>
       </div>
-      <div className="font-display text-[12px] mt-1" style={{ color: "#b3001b" }}>
+      <div className="text-[10px] uppercase tracking-wide opacity-60 mt-1">Signature move</div>
+      <div className="font-display text-[12px] leading-tight" style={{ color: "#b3001b" }}>
         {def.special.name}
       </div>
       {action ? <div className="mt-1">{action}</div> : null}

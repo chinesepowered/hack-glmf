@@ -16,8 +16,8 @@ import {
   type Ring,
   type Burst,
   type Ghost,
-} from "@/lib/game/engine";
-import type { CharacterDef, LookDef } from "@/lib/types";
+} from "./engine.ts";
+import type { CharacterDef, LookDef } from "./types.ts";
 
 const INK = "#141414";
 const ROUND_FRAMES = ROUND_SECONDS * 60;

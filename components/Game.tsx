@@ -1,9 +1,5 @@
 "use client";
 
-// Canvas host for a fight: owns the requestAnimationFrame loop, the fixed
-// timestep accumulator and keyboard mapping. All simulation lives in the
-// engine; all drawing in the renderer.
-
 import { useEffect, useRef } from "react";
 import {
   ARENA_H,
@@ -49,7 +45,10 @@ export default function Game({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const dpr = Math.min(3, Math.max(1, window.devicePixelRatio || 1));
+    canvas.width = Math.round(ARENA_W * dpr);
+    canvas.height = Math.round(ARENA_H * dpr);
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
     let battle = new WorldBattle([p1, p2], cpu);
@@ -59,6 +58,13 @@ export default function Game({
     let last = performance.now();
     let acc = 0;
     const STEP = 1000 / 60;
+
+    const clearInputs = () => {
+      for (const key of Object.keys(in1) as (keyof Inputs)[]) {
+        in1[key] = false;
+        in2[key] = false;
+      }
+    };
 
     const applyKey = (map: Record<string, keyof Inputs>, code: string, down: boolean) => {
       const action = map[code];
@@ -75,6 +81,7 @@ export default function Game({
       }
       if (e.code === "KeyR" && battle.phase === "ko") {
         battle = new WorldBattle([p1, p2], cpu);
+        clearInputs();
         return;
       }
       if (applyKey(P1_KEYS, e.code, true) || applyKey(P2_KEYS, e.code, true)) {
@@ -92,7 +99,7 @@ export default function Game({
       raf = requestAnimationFrame(loop);
       let dt = now - last;
       last = now;
-      if (dt > 100) dt = 100; // tab-switch guard
+      if (dt > 100) dt = 100;
       acc += dt;
       let steps = 0;
       while (acc >= STEP && steps < 5) {
@@ -101,16 +108,21 @@ export default function Game({
         acc -= STEP;
         steps++;
       }
+      ctx.save();
+      ctx.scale(dpr, dpr);
       drawScene(ctx, battle);
+      ctx.restore();
     };
 
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
+    window.addEventListener("blur", clearInputs);
     raf = requestAnimationFrame(loop);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("blur", clearInputs);
     };
   }, [p1, p2, cpu]);
 

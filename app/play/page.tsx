@@ -40,8 +40,8 @@ function PlayInner() {
         <Game p1={p1} p2={p2} cpu={cpu} />
       </div>
       <p className="text-center text-sm mt-3">
-        P1: A/D move · W jump · S block · F punch · G kick · H special — P2: Arrows · J punch · K
-        kick · L special — R rematch
+        P1: A/D move · W jump · S block · F punch · G kick · H signature — P2: Arrows · J punch · K
+        kick · L signature — R rematch
       </p>
     </main>
   );
